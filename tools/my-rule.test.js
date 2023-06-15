@@ -132,117 +132,103 @@ if(true) {
             code: `
 import fs from 'fs';
 import path from 'path';
+
 import _ from 'lodash';
+`,
+            output: `
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
+`,
+            errors: [
+                {
+                    type: "Program",
+                },
+            ],
+        },
+        {
+            code: `
+import type {ExperimentFlag} from '.';
+import {selectDeliveryDate} from '../../selectors';
+`,
+            output: `
+import {selectDeliveryDate} from '../../selectors';
+
+import type {ExperimentFlag} from '.';
+`,
+            errors: [
+                {
+                    type: "Program",
+                },
+            ],
+        },
+        {
+            code: `
+import {selectDeliveryDate} from '../../selectors';
+import {calcDeliveryDate} from './helpers';
+import type {ExperimentFlag} from '.';
+`,
+            output: `
+import {selectDeliveryDate} from '../../selectors';
+
+import type {ExperimentFlag} from '.';
+import {calcDeliveryDate} from './helpers';
+`,
+            errors: [
+                {
+                    type: "Program",
+                },
+            ],
+        },
+        {
+            code: `
+import { call } from "typed-redux-saga";
+import { ClientBus, subscribe } from "@yandex-nirvana/bus";
+`,
+            output: `
+import { ClientBus, subscribe } from "@yandex-nirvana/bus";
+
+import { call } from "typed-redux-saga";
+`,
+            errors: [
+                {
+                    type: "Program",
+                },
+            ],
+        },
+        {
+            code: `
+import { pluralize } from "../../../../lib/utils";
+import { call } from "typed-redux-saga";
+`,
+            output: `
+import { call } from "typed-redux-saga";
+
+import { pluralize } from "../../../../lib/utils";
+`,
+            errors: [
+                {
+                    type: "Program",
+                },
+            ],
+        },
+        {
+            code: `
+import fs from 'fs';
+const dynamic = import("my-dynamic-import");
+import _ from 'lodash';
+import path from 'path';
 `,
             output: `
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 
-`,
-            errors: [
-                {
-                    type: "ImportDeclaration",
-                },
-            ],
-        },
-        {
-            code: `
-import type {ExperimentFlag} from '.';
-import {selectDeliveryDate} from '../../selectors';
-`,
-            output: `
-import {selectDeliveryDate} from '../../selectors';
-import type {ExperimentFlag} from '.';
-`,
-            errors: [
-                {
-                    type: "ImportDeclaration",
-                },
-            ],
-        },
-        {
-            code: `
-import {selectDeliveryDate} from '../../selectors';
-import {calcDeliveryDate} from './helpers';
-import type {ExperimentFlag} from '.';
-`,
-            output: `
-import {selectDeliveryDate} from '../../selectors';
-import type {ExperimentFlag} from '.';
-import {calcDeliveryDate} from './helpers';
-`,
-            errors: [
-                {
-                    type: "ImportDeclaration",
-                },
-            ],
-        },
-        {
-            code: `
-import { call } from "typed-redux-saga";
-import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-`,
-            output: `
-import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-import { call } from "typed-redux-saga";
-`,
-            errors: [
-                {
-                    type: "ImportDeclaration",
-                },
-            ],
-        },
-        {
-            code: `
-import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-import { call } from "typed-redux-saga";
-import {selectDeliveryDate} from '../../selectors';
-import {calcDeliveryDate} from './helpers';
-`,
-            output: `
-import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-import { call } from "typed-redux-saga";
-import {selectDeliveryDate} from '../../selectors';
-import {calcDeliveryDate} from './helpers';
-`,
-            errors: [
-                {
-                    type: "ImportDeclaration",
-                },
-            ],
-        },
-        {
-            code: `
-import { pluralize } from "../../../../lib/utils";
-import { call } from "typed-redux-saga";
-`,
-            output: `
-import { call } from "typed-redux-saga";
-import { pluralize } from "../../../../lib/utils";
-`,
-            errors: [
-                {
-                    type: "ImportDeclaration",
-                },
-            ],
-        },
-        {
-            code: `
-import fs from 'fs';
-const dynamic = import("my-dynamic-import");
-import _ from 'lodash';
-import path from 'path';
-`,
-            output: `
-import fs from 'fs';
-import _ from 'lodash';
-import path from 'path';
 const dynamic = import("my-dynamic-import");
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },
@@ -255,13 +241,16 @@ import _ from 'lodash';
 `,
             output: `
 import {defaultConfig} from "@shri2023/config";
+
 import _ from 'lodash';
+
 import {pluralize} from "../../../../lib/utils";
+
 import {calcDeliveryDate} from './helpers';
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },
@@ -278,30 +267,33 @@ import {hermione} from "@yandex";
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },
         {
             code: `
 import {relative} from "../../relative-package";
+
 // This module is imported for commons good
 import * as lodash from "lodash";
 `,
             output: `
 // This module is imported for commons good
 import * as lodash from "lodash";
+
 import {relative} from "../../relative-package";
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },
         {
             code: `
 import {relative} from "../../relative-package";
+
 /**
  * This module is imported
  * for commons good
@@ -314,11 +306,12 @@ import * as lodash from "lodash";
  * for commons good
  */
 import * as lodash from "lodash";
+
 import {relative} from "../../relative-package";
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },
@@ -332,6 +325,7 @@ import * as lodash from "lodash";
 `,
             output: `
 import * as lodash from "lodash";
+
 // This module is imported for commons good
 // This module is imported for commons good
 // This module is imported for commons good
@@ -339,15 +333,18 @@ import {relative} from "../../relative-package";
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },
         {
             code: `
 import _ from 'lodash';
+
 import fs from 'fs';
+
 import path from 'path';
+
 if(true) {
     const dynamic = import("my-dynamic-import");
     const dynamic2 = import("my-dynamic-import2");
@@ -365,7 +362,7 @@ if(true) {
 `,
             errors: [
                 {
-                    type: "ImportDeclaration",
+                    type: "Program",
                 },
             ],
         },

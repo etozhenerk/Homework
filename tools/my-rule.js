@@ -101,10 +101,14 @@ module.exports = {
 
                 if (dinamicNodes.length > 0) {
                     text += "\n\n";
-                    dinamicNodes.forEach((node) => {
+                    dinamicNodes.forEach((node, i) => {
                         const currentText = getNodeText(sourceCode, node);
 
-                        text += currentText + "\n";
+                        text += currentText;
+
+                        if (i !== dinamicNodes.length - 1) {
+                            text += "\n";
+                        }
                     });
                 }
 
