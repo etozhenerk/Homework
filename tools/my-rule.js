@@ -63,7 +63,7 @@ module.exports = {
 
         return {
             Program: (node) => {
-                const programText = sourceCode.getText(node);
+                const programText = getNodeText(sourceCode, node);
                 const nodes = filterNodes(node.body, ["ImportDeclaration"]);
                 const dinamicNodes = filterNodes(node.body, ["VariableDeclaration"]);
                 const sorted = nodes
