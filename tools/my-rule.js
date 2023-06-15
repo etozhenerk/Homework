@@ -7,76 +7,104 @@ module.exports = {
 
   create(context) {
     const sourceCode = context.getSourceCode();
-    const text = sourceCode.text;
-    let nodes = [];
+    const groups = [/^@\w/, /^\w/, /^\.\.\//, /^\./];
 
-    function isRelativeImport(path) {
-      return path.startsWith("./") || path.startsWith("../");
-    }
+    const range = {
+      start: (node) => node.range[0],
+      end: (node) => node.range[1],
+    };
 
-    function isScopedOrAliasedImport(path) {
-      return path.startsWith("@");
-    }
+    const getSortValue = (node) => getName(node.source);
 
-    function isNpmPackageImport(path) {
-      return !isRelativeImport(path) && !isScopedOrAliasedImport(path);
-    }
+    const getTextRange = (left, right) => [range.start(left), range.end(right)];
 
-    function sortNodes(a, b) {
-      return a.specifiers[0].local.name.localeCompare(
-        b.specifiers[0].local.name
+    function getNodeRange(source, node, includeComments = true) {
+      return getTextRange(
+        (includeComments && source.getCommentsBefore(node)[0]),
+        node
       );
     }
 
+    function getNodeText(source, node, includeComments = true) {
+      return source
+        .getText()
+        .slice(...getNodeRange(source, node, includeComments));
+    }
+
+    function enumerate(a, b) {
+      return a
+        .map((val, index) => [val, b[index]])
+        .filter((x) => x[0] !== x[1]);
+    }
+
+    function isUnsorted(nodes, sorted) {
+      return nodes.find((node, i) => node !== sorted[i]);
+    }
+
+    function getName(node) {
+      switch (node?.type) {
+        case "Identifier":
+        case "PrivateIdentifier":
+          return node.name;
+
+        case "Literal":
+          return node.value?.toString();
+
+        case "TemplateLiteral":
+          return node.quasis.reduce(
+            (acc, quasi, i) =>
+              acc + quasi.value.raw + getName(node.expressions[i]),
+            ""
+          );
+      }
+
+      return "";
+    }
+
+    const filterNodes = (nodes, types) =>
+      nodes.filter((node) => types.includes(node.type));
+
+    function getSortGroup(sortGroups, node) {
+      const source = getName(node.source);
+
+      for (let i = 0; i < sortGroups.length; i++) {
+        const group = sortGroups[i];
+
+        if (group && new RegExp(group).test(source)) {
+          return i;
+        }
+      }
+
+      return 0;
+    }
+
     return {
-      ImportDeclaration: (node) => {},
       Program: (node) => {
-        const allImports = node.body.filter(
-          (el) => el.type === "ImportDeclaration"
-        );
+        const nodes = filterNodes(node.body, ["ImportDeclaration"]);
+        const sorted = nodes
+          .slice()
+          .sort(
+            (a, b) =>
+              getSortGroup(groups, a) - getSortGroup(groups, b) ||
+              getSortValue(a).localeCompare(getSortValue(b))
+          );
 
-        const relativeImports = node.body
-          .filter(
-            (el) =>
-              el.type === "ImportDeclaration" &&
-              isRelativeImport(el.source.value)
-          )
-          .sort(sortNodes);
+        const firstUnsortedNode = isUnsorted(nodes, sorted);
 
-        const scopedOrAliasedImports = node.body
-          .filter(
-            (el) =>
-              el.type === "ImportDeclaration" &&
-              isScopedOrAliasedImport(el.source.value)
-          )
-          .sort(sortNodes);
+        if (firstUnsortedNode) {
+          const isFirst = (node) => node === nodes[0];
 
-        const npmPackageImports = node.body
-          .filter(
-            (el) =>
-              el.type === "ImportDeclaration" &&
-              isNpmPackageImport(el.source.value)
-          )
-          .sort(sortNodes);
-
-        const allSortedImports = [
-          ...relativeImports,
-          ...scopedOrAliasedImports,
-          ...npmPackageImports,
-        ];
-
-        const allImportsNames = allImports.map(
-          (el) => el.specifiers[0].local.name
-        );
-
-        const allSortedImportsNames = allSortedImports.map(
-          (el) => el.specifiers[0].local.name
-        );
-
-        if (allImportsNames.join(" ") !== allSortedImportsNames.join(" ")) {
           context.report({
-            node,
-            message: "test",
+            node: firstUnsortedNode,
+            message: "unsorted",
+            *fix(fixer) {
+              for (const [node, complement] of enumerate(nodes, sorted)) {
+                yield fixer.replaceTextRange(
+                  getNodeRange(sourceCode, node, !isFirst(node)),
+                  getNodeText(sourceCode, complement, !isFirst(complement))
+                );
+              }
+            },
           });
         }
       },

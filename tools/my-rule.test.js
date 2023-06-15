@@ -132,6 +132,7 @@ import path from 'path';
       code: `
     import fs from 'fs';
     import path from 'path';
+
     import _ from 'lodash';
             `,
       output: `
@@ -141,66 +142,92 @@ import path from 'path';
             `,
       errors: [
         {
-          type: "Program",
+          type: "ImportDeclaration",
         },
       ],
     },
-    //     {
-    //       code: `
-    // import type {ExperimentFlag} from '.';
-    // import {selectDeliveryDate} from '../../selectors';
-    //         `,
-    //       output: `
-    // import {selectDeliveryDate} from '../../selectors';
-    // import type {ExperimentFlag} from '.';
-    //         `,
-    //     },
-    //     {
-    //       code: `
+    {
+      code: `
+    import type {ExperimentFlag} from '.';
+    import {selectDeliveryDate} from '../../selectors';
+            `,
+      output: `
+    import {selectDeliveryDate} from '../../selectors';
+    import type {ExperimentFlag} from '.';
+            `,
+      errors: [
+        {
+          type: "ImportDeclaration",
+        },
+      ],
+    },
+    {
+      code: `
+    import {selectDeliveryDate} from '../../selectors';
+    import {calcDeliveryDate} from './helpers';
+    import type {ExperimentFlag} from '.';
+            `,
+      output: `
+    import {selectDeliveryDate} from '../../selectors';
+    import type {ExperimentFlag} from '.';
+    import {calcDeliveryDate} from './helpers';
+            `,
+      errors: [
+        {
+          type: "ImportDeclaration",
+        },
+      ],
+    },
+
+    {
+      code: `
+    import { call } from "typed-redux-saga";
+    import { ClientBus, subscribe } from "@yandex-nirvana/bus";
+            `,
+      output: `
+    import { ClientBus, subscribe } from "@yandex-nirvana/bus";
+    import { call } from "typed-redux-saga";
+            `,
+      errors: [
+        {
+          type: "ImportDeclaration",
+        },
+      ],
+    },
+    // {
+    //   code: `
+    // import { ClientBus, subscribe } from "@yandex-nirvana/bus";
+    // import { call } from "typed-redux-saga";
     // import {selectDeliveryDate} from '../../selectors';
     // import {calcDeliveryDate} from './helpers';
-    // import type {ExperimentFlag} from '.';
     //         `,
-    //       output: `
-    // import {selectDeliveryDate} from '../../selectors';
-    // import type {ExperimentFlag} from '.';
-    // import {calcDeliveryDate} from './helpers';
-    //         `,
-    //     },
-    //     {
-    //       code: `
-    // import { call } from "typed-redux-saga";
-    // import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-    //         `,
-    //       output: `
-    // import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-    // import { call } from "typed-redux-saga";
-    //         `,
-    //     },
-    //     {
-    //       code: `
+    //   output: `
     // import { ClientBus, subscribe } from "@yandex-nirvana/bus";
     // import { call } from "typed-redux-saga";
     // import {selectDeliveryDate} from '../../selectors';
     // import {calcDeliveryDate} from './helpers';
     //         `,
-    //       output: `
-    // import { ClientBus, subscribe } from "@yandex-nirvana/bus";
-    // import { call } from "typed-redux-saga";
-    // import {selectDeliveryDate} from '../../selectors';
-    // import {calcDeliveryDate} from './helpers';
-    //         `,
-    //     },
+    //   errors: [
     //     {
-    //       code: `
-    // import { pluralize } from "../../../../lib/utils";
-    // import { call } from "typed-redux-saga";
-    //         `,
-    //       output: `
-    // import { call } from "typed-redux-saga";
-    // import { pluralize } from "../../../../lib/utils";
-    //         `,
+    //       type: "ImportDeclaration",
     //     },
+    //   ],
+    // },
+    {
+      code: `
+    import { pluralize } from "../../../../lib/utils";
+    import { call } from "typed-redux-saga";
+            `,
+      output: `
+    import { call } from "typed-redux-saga";
+    import { pluralize } from "../../../../lib/utils";
+            `,
+      errors: [
+        {
+          type: "ImportDeclaration",
+        },
+      ],
+    },
     //     {
     //       code: `
     // import fs from 'fs';
