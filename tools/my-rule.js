@@ -20,7 +20,7 @@ module.exports = {
 
     function getNodeRange(source, node, includeComments = true) {
       return getTextRange(
-        (includeComments && source.getCommentsBefore(node)[0]),
+        (includeComments && source.getCommentsBefore(node)[0]) || node,
         node
       );
     }
@@ -31,24 +31,18 @@ module.exports = {
         .slice(...getNodeRange(source, node, includeComments));
     }
 
-    function enumerate(a, b) {
-      return a
-        .map((val, index) => [val, b[index]])
-        .filter((x) => x[0] !== x[1]);
-    }
-
     function isUnsorted(nodes, sorted) {
       return nodes.find((node, i) => node !== sorted[i]);
     }
 
     function getName(node) {
-      switch (node?.type) {
+      switch (node.type) {
         case "Identifier":
         case "PrivateIdentifier":
           return node.name;
 
         case "Literal":
-          return node.value?.toString();
+          return node.value.toString();
 
         case "TemplateLiteral":
           return node.quasis.reduce(
@@ -92,18 +86,32 @@ module.exports = {
         const firstUnsortedNode = isUnsorted(nodes, sorted);
 
         if (firstUnsortedNode) {
-          const isFirst = (node) => node === nodes[0];
+          const firstNode = nodes[0];
+          const lastNode = nodes[nodes.length - 1];
+
+          const range = getTextRange(firstNode, lastNode);
+
+          let text = "";
+
+          let group = null;
+
+          sorted.forEach((node) => {
+            const currentGroup = getSortGroup(groups, node);
+            const currentText = getNodeText(sourceCode, node);
+
+            if (group !== null && currentGroup !== group) {
+              text += "\n";
+            }
+
+            text += currentText + "\n";
+            group = currentGroup;
+          });
 
           context.report({
             node: firstUnsortedNode,
             message: "unsorted",
-            *fix(fixer) {
-              for (const [node, complement] of enumerate(nodes, sorted)) {
-                yield fixer.replaceTextRange(
-                  getNodeRange(sourceCode, node, !isFirst(node)),
-                  getNodeText(sourceCode, complement, !isFirst(complement))
-                );
-              }
+            fix(fixer) {
+              return fixer.replaceTextRange(range, text);
             },
           });
         }
