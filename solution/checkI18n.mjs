@@ -12,12 +12,12 @@ const STUDENT_DIRECTORY = resolve(
 
 
 try {
-    const i18n = JSON.parse(readFileSync(`${STUDENT_DIRECTORY}\\i18n.json`, 'utf-8'));
+    const i18n = JSON.parse(readFileSync(`${STUDENT_DIRECTORY}/i18n.json`, 'utf-8'));
     const i18nKeys = Object.keys(i18n);
     const i18nValue = Object.values(i18n);
 
 
-    const files = readdirSync(`${STUDENT_DIRECTORY}\\dist`, 'utf-8');
+    const files = readdirSync(`${STUDENT_DIRECTORY}/dist`, 'utf-8');
 
     files.forEach((filename) => {
         if (extname(filename) === '.js') {
