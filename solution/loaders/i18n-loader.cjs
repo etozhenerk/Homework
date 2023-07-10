@@ -4,7 +4,6 @@ module.exports = function (content) {
     for (const key in options) {
         const element = options[key];
         const regexp = new RegExp(`i18n\\(('|")${key}('|")\\)`);
-        console.log(regexp);
         result = result.replace(regexp, `"${element}"`);
     }
     return result;
