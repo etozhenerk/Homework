@@ -3,9 +3,9 @@ module.exports = function (content) {
     let result = content;
     for (const key in options) {
         const element = options[key];
-
-        result = result.replace(`i18n('${key}')`, element);
+        const regexp = new RegExp(`i18n\\(('|")${key}('|")\\)`);
+        console.log(regexp);
+        result = result.replace(regexp, `"${element}"`);
     }
-
-    return content;
+    return result;
 };
