@@ -5,12 +5,12 @@ function Sequence(from, to, step) {
     return new Sequence(from, to, step);
   }
 
-  const stepSymbop = Symbol.for("step");
-  this[stepSymbop] = step;
+  const stepSymbol = Symbol.for("step");
+  this[stepSymbol] = step;
 
   this[Symbol.toPrimitive] = function (hint) {
     if (hint === "string") {
-      return `Sequence of numbers from ${from} to ${to} with step ${this[stepSymbop]}`;
+      return `Sequence of numbers from ${from} to ${to} with step ${this[stepSymbol]}`;
     }
 
     if (hint === "number") {
@@ -29,12 +29,12 @@ function Sequence(from, to, step) {
     if (from > to) {
       while (from >= to) {
         yield from;
-        from = from - this[stepSymbop];
+        from = from - this[stepSymbol];
       }
     } else {
       while (from <= to) {
         yield from;
-        from = from + this[stepSymbop];
+        from = from + this[stepSymbol];
       }
     }
 
@@ -45,8 +45,8 @@ function Sequence(from, to, step) {
 }
 
 Sequence.prototype.setStep = function (step) {
-  const stepSymbop = Symbol.for("step");
-  this[stepSymbop] = step;
+  const stepSymbol = Symbol.for("step");
+  this[stepSymbol] = step;
 };
 
 // ТЕСТЫ
